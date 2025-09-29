@@ -46,9 +46,11 @@ public class LoginController extends HttpServlet {
 		Member member = new Member();
 		member.setUserId(userId);
 		member.setUserPwd(userPwd);
+		System.out.println(member);
 		Member loginMember = new MemberService().login(member);
 		// 성공했을 경우 : 조회성공한 컬럼값을 필드에 담은 멤버객체 주소값
 		// 실패했을 경우 : null값
+		
 		
 		//System.out.println(loginMember);
 		
@@ -96,8 +98,9 @@ public class LoginController extends HttpServlet {
 			session.setAttribute("userInfo", loginMember);
 			
 			// 스텝 2. RequestDispatcher ㅎㄷㅅgodhrl
-			request.getRequestDispatcher("/index.jsp").forward(request,  response);
-			
+			//request.getRequestDispatcher("/index.jsp").forward(request,  response);
+			session.setAttribute("alertMsg", "로그인 성공~");
+			response.sendRedirect("/kh");
 			
 		} else {
 		

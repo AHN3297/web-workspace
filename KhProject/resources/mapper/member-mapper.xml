@@ -27,4 +27,45 @@
 	
 	</select>
 	
+	<update id="update">
+		UPDATE
+		       KH_MEMBER
+		   SET
+		       USER_NAME = #{userName}
+		     , EMAIL = #{email}
+		     , MODIFY_DATE = SYSDATE
+		 WHERE
+			   USER_NO = #{userNo}
+		   AND
+		       STATUS = 'Y'		   
+	
+	</update>
+	
+	<update id="delete">
+		UPDATE
+			   KH_MEMBER
+		   SET
+		       STATUS = 'N'
+		     , MODIFY_DATE = SYSDATE
+		 WHERE
+		       USER_NO = #{userNo}
+		   AND
+		       USER_PWD = #{userPwd}
+	
+	</update>
+	
+	<update id="updatePwd">
+		UPDATE
+		       KH_MEMBER
+		   SET
+		       USER_PWD = #{updatePwd}
+		 WHERE
+		       USER_NO = #{userNo}
+		   AND
+		       USER_PWD = #{userPwd}
+		   AND
+		       STATUS = 'Y'
+		       
+	</update>
+	
 </mapper>  
