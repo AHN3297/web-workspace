@@ -56,6 +56,10 @@ tr:hover{
                         <td>
                         ${ board.boardWriter }
                         </td>
+                        <!-- 
+                        <a href="detail.board?boardNo=${ board.boardNo }>
+                         -->
+                   
                         <td style="color: #52d6ffcc;">
                         ${ board.boardTitle } &nbsp;
                         </td>
@@ -74,6 +78,15 @@ tr:hover{
             </div>            
          </div>
       </div>
+      <script>
+            	$(function(){
+            		$('.board').click (e =>{
+            			//console.log(e.currentTarget);
+            			const targetId = e.currentTarget.id
+            			location.href =`detail.board?boardNo=\${targetId}`;
+            		});
+            	});
+       </script>>
          <div class="paging-area" align="center" >
          
          		<button 

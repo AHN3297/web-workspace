@@ -1,5 +1,6 @@
 package com.kh.java.board.controller;
 
+import java.io.File;
 import java.io.IOException;
 
 import javax.servlet.ServletContext;
@@ -143,7 +144,25 @@ public class BoardInsertController extends HttpServlet {
 			}
 			
 			// 4) 요청처리 Service 호출
-			  new BoardService().insert(board, at);
+			int result = new BoardService().insert(board, at);
+			  
+			// 5) 응답화면 지정
+			if(result > 0) {
+				session.setAttribute("alertMsg", "게시글작성 성공");
+				/*
+				request.getRequestDispatcher("/WEB-INF/views/board/board_list.jsp")
+				       .forward(request,  response);
+				 */
+				response.sendRedirect(request.getContextPath() + "/boards?page=1");
+			} else {
+				// 실패했을 경우 파일이 존재했다면 파일을 지워버리겠음
+				if(at != null) {
+					new File(savePath + "/" + at.getChangeName()).delete();
+				}
+				request.setAttribute("msg", "게시글 작성 실패");
+				request.getRequestDispatcher("/WEB-INF/views/common/result_page.jsp")
+				       .forward(request,  response);
+			}
 			
 			
 		}
