@@ -77,6 +77,18 @@ tr:hover{
                </table>               
             </div>            
          </div>
+         <div id="search-area" class="form-group">
+        <form action="seach.board" method="get">
+        	<select name="condition" class="form-control">
+        		<option value="writer"> 작성자 </option>
+        		<option value="content"> 내용 </option>
+        		<option value="writer"> 제목 </option>
+        	</select>
+        	<input type="text" name="query" class="form-control" />
+        	<input type="hidden" name="page" value="1" />
+        	<button type="submit" class="btn btn-block" style="background:52b1ff; color:white">검색</button>
+        </form>
+         </div>
       </div>
       <script>
             	$(function(){

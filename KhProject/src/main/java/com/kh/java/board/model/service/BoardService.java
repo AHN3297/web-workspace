@@ -1,5 +1,6 @@
 package com.kh.java.board.model.service;
 
+import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -7,6 +8,7 @@ import java.util.Map;
 import org.apache.ibatis.session.SqlSession;
 
 import com.kh.java.board.model.dao.BoardDao;
+import com.kh.java.board.model.dto.ImageBoardDto;
 import com.kh.java.board.model.vo.Attachment;
 import com.kh.java.board.model.vo.Board;
 import com.kh.java.board.model.vo.Category;
@@ -102,6 +104,7 @@ public class BoardService {
 		return null;
 		
 	}
+	
 	public int deleteBoard(Board board) {
 		SqlSession sqlSession = Template.getSqlSession();
 		
@@ -120,6 +123,113 @@ public class BoardService {
 		}
 		
 		return result * result2;
+	}
+	
+	public int update(Board board, Attachment at) {
+		
+		SqlSession sqlSession = Template.getSqlSession();
+		
+		int boardResult = bd.updateBoard(sqlSession, board);
+		
+		// Attachment~
+		// 새 첨부파일이 없을 때
+		int atResult = 1;
+		
+		// 새 첨부파일이 존재할 셩우
+		if(at != null) {
+			// case 1
+			if (at.getFileNo() != null) {
+				// 기존에 첨부파일이 있다 => UPDATE
+				atResult = bd.updateAttachment(sqlSession, at);
+			} else {
+				// 기존 첨부파일 없음 => INSERT
+				atResult = bd.insertAttachment(sqlSession, at);
+			}
+			// case 2
+		}// 없으면 뭐 할거 없음
+		
+		// 둘 다 성공했을 때만 commit
+		// 하나라도 실패했으면 rollback;
+		if(boardResult * atResult > 0) {
+			sqlSession.commit();
+		} else {
+			sqlSession.rollback();
+		}
+		
+		sqlSession.close();
+		
+		return (boardResult * atResult);
+		
+	}
+	
+	public int searchedCount(Map<String, Object> map) {
+		SqlSession sqlSession = Template.getSqlSession();
+		int count = bd.searchedCount(sqlSession, map);
+		sqlSession.close();
+		return count;
+		
+	}
+	
+	public List<Board> selectSearchList(Map<String, Object> map){
+		SqlSession sqlSession = Template.getSqlSession();
+		List<Board> boards = bd.selectSearchList(sqlSession, map);
+		sqlSession.close();
+		return boards;
+		
+		
+	}
+	
+	// 여기 뭐하나 있는데 못 봄
+	public List<Board> InsertImage(Board board, Files files) {
+		SqlSession sqlSession = Template.getSqlSession();
+		
+		result = bd.insertImageBoard(sqlSession, board);
+		
+		// 2. 게시글 INSERT가 성공 시 첨부파일들 INSERT
+		if(result > 0) {
+			// 첨부파일 개수만큼 INSERT
+			for(Attachment file : files) {
+				file.setRefBno(board.getBoardNo());
+				
+				result = bd.insertAttachmentList(sqlSession, files);
+				
+				if(result == 0) {
+					break;
+				}
+			}
+		}
+		// 3. 다성공했으면 Commit
+		if(result > 0) {
+			sqlSession. commit();
+		} else {
+			sqlSession.rollback();
+		}
+		catch(Exception e) {
+			sqlSession.rollback();
+			e.printStackTrace();
+			result = 0;
+		} finally {
+			sqlSession.close();
+		}
+		return result;
+		
+	}
+	
+	public List<ImageBoardDto> selectImageList(){
+		SqlSession sqlSession = Template.getSqlSession();
+		List<ImageBoardDto> boards = bd.selectImageList(sqlSession);
+		sqlSession.close();
+		return boards;
+		
+	}
+	
+	public Map<String, Object> selectImageDetail(long boardNo){
+		SqlSession sqlSession = Template.getSqlSession();
+		// UPDATE KH_BOARD
+		int updateResult = bd.increaseCount(sqlSession, Long.intvalue(boardNo));
+		// SELECT ONE KH_BOARD
+		// SELECTlIST KH_ATTACHMENT
+		return null;
 	}
 	
 }

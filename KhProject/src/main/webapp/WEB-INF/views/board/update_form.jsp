@@ -63,8 +63,12 @@
             <div class="form-group">
             	<input type="file" name="reUpfile">
             	
+            	<c:if test="${  not emptymap.at }">
             	<!-- 기존 첨부파일이 존재했을 경우 원본파일명 보여주기 -->
-            	첨부파일 : <label>원본 첨부파일명</label>
+            	첨부파일 : <label>${ map.at.originName }</label>
+            	<input type="hidden" name="fileNo" value="${ map.at.fileNo }" />
+            	<input type="hidden" name="changeName" value="${ map.at.changeName }" />
+            	</c:if>
             </div>
 
             <div align="center">
